@@ -1,0 +1,20 @@
+{
+  "name": "zigzag",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/amfamiena/zigzag.git",
+  "author": "carlos-eduard0 <eduard.mascarenhas.ce@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "express": "^4.17.1",
+    "knex": "^0.21.9",
+    "pg": "^8.4.2"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
