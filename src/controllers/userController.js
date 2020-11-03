@@ -1,21 +1,23 @@
-const crypto = require('crypto');
+const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
 const connection = require('../database/connection');
 module.exports = {
+    async index(req, res){
+        const indexUser = await connection('users')
+        .select('*');
+
+        return res.status(200).json(indexUser);
+    },
     async create(req, res) {
         try {
             const { nome, email, estado, senha, confirma_senha } = req.body;
-            const id = crypto.randomBytes(4).toString('HEX');
-
+            const id = uuid();
             const saltRounds = 10
             const salt = bcrypt.genSaltSync(saltRounds);
             const hash = bcrypt.hashSync(senha, salt);
 
-            if (senha !== confirma_senha) {
-                res.status(400).json({ message: "Suas senhas não conferem!" });
-            }
-            if (senha.length < 8) {
-                res.status(400).json({ message: "Senha muita curta, mínimo 8 caracteres" });
+            if (senha !== confirma_senha || senha.length < 8) {
+                res.status(400).json({ error: "Verifique suas senhas" });
             }
             else {
                 const user = await connection('users')

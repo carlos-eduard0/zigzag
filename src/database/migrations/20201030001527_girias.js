@@ -7,9 +7,9 @@ exports.up = function (knex) {
         table.string('state').notNullable();
         table.string('category').notNullable();
         table.string('likes').notNullable();
+        table.string('id_user').notNullable();
         table.timestamp('data_sync', { useTz: true }, { precision: 6 }).defaultTo(knex.fn.now(6));
-        table.string('user').notNullable();
-        table.foreign('user').references('id').inTable('users');
+        table.foreign('id_user').references('id').inTable('users');
     });
 };
 

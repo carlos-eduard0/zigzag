@@ -6,9 +6,11 @@ exports.up = function (knex) {
         table.string('email').notNullable();
         table.string('estado').notNullable();
         table.string('senha').notNullable();
+        table.timestamp('data_sync', { useTz: true }, { precision: 6 }).defaultTo(knex.fn.now(6));
     });
 };
 
 exports.down = function (knex) {
     return knex.schema.dropTable('users');
 };
+
