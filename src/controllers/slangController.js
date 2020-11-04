@@ -5,6 +5,38 @@ module.exports = {
         const slangs = await connection('slang').select('name', 'example', 'explanation', 'state', 'category', 'likes');
         return res.json(slangs);
     },
+
+    async filter(req, res) {
+        try {
+            const { name } = req.query;
+
+            const filterSlang = await connection('slang')
+                .select('*')
+                .where('name', 'ilike', `${name}%`);
+
+            return res.status(200).json(filterSlang);
+        } catch (error) {
+            return res.status(400).json({ error: error })
+        }
+
+    },
+
+    async filterState(req, res) {
+        try {
+            const { state } = req.query;
+
+            const filterState = await connection('slang')
+                .select('*')
+                .where('state', state);
+
+            return res.status(200).json(filterState);
+        } catch (error) {
+            return res.status(400).json({ error: error })
+        }
+
+    },
+
+
     async indexSlangsUser(req, res) {
         const id_user = req.headers.authorization;
         const slangs = await connection('slang')
@@ -13,6 +45,7 @@ module.exports = {
 
         return res.json(slangs);
     },
+
     async create(req, res) {
         const id_user = req.headers.authorization;
         const { name, example, explanation, state, category } = req.body;
@@ -31,6 +64,7 @@ module.exports = {
             return res.status(400).json(error);
         };
     },
+
     async update(req, res) {
         try {
             const id_user = req.headers.authorization;
@@ -54,6 +88,27 @@ module.exports = {
                     id_user: id_user,
                 });
             return res.status(200).json({ message: "Sucesso!" })
+        } catch (error) {
+            return res.status(400).json(error);
+        };
+    },
+    async like(req, res) {
+        try {
+            const { id } = req.params;
+
+            const indexLikes = await connection('slang')
+                .select('likes')
+                .where('id', id)
+                .first();
+
+            indexLikes.likes = indexLikes.likes + 1;
+
+            await connection('slang')
+                .where('id', id)
+                .update({
+                    likes: indexLikes.likes,
+                });
+            return res.status(200).send();
         } catch (error) {
             return res.status(400).json(error);
         };
