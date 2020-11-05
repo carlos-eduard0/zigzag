@@ -5,6 +5,7 @@ const SlangController = require('./controllers/slangController.js');
 
 rotas.post('/user', UserController.create);
 rotas.get('/user', UserController.index);
+rotas.put('/user', UserController.update);
 
 
 rotas.post('/slang', SlangController.create);
