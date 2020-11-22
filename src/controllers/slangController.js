@@ -2,13 +2,19 @@ const connection = require('../database/connection');
 
 module.exports = {
     async index(req, res) {
-        const slangs = await connection('slang').select('name', 'example', 'explanation', 'state', 'category', 'likes');
+        const slangs = await connection('slang').select('name', 'example', 'explanation', 'state', 'category', 'likes', 'id_user', 'id');
+        return res.json(slangs);
+    },
+
+    async indexLikes(req, res) {
+        const getLikes = await connection('slang').select('likes');
         return res.json(slangs);
     },
 
     async filter(req, res) {
         try {
-            const { name } = req.query;
+            const { name } = req.body;
+            console.log(name);
 
             const filterSlang = await connection('slang')
                 .select('*')
@@ -39,11 +45,15 @@ module.exports = {
 
     async indexSlangsUser(req, res) {
         const id_user = req.headers.authorization;
-        const slangs = await connection('slang')
-            .select('name', 'example', 'explanation', 'state', 'category', 'likes')
-            .where('id_user', id_user);
+        try {
+            const slangs = await connection('slang')
+                .select('*')
+                .where('id_user', id_user);
 
-        return res.json(slangs);
+            return res.json(slangs);
+        } catch (error) {
+            res.json(error)
+        }
     },
 
     async create(req, res) {
@@ -108,7 +118,7 @@ module.exports = {
                 .update({
                     likes: indexLikes.likes,
                 });
-            return res.status(200).send();
+            return res.status(200).json(indexLikes.likes);
         } catch (error) {
             return res.status(400).json(error);
         };

@@ -1,13 +1,13 @@
 const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
 const connection = require('../database/connection');
-const { response } = require('express');
+
 module.exports = {
     async index(req, res){
         const indexUser = await connection('users')
         .select('*');
 
-        return res.status(200).json(indexUser);
+        return res.status(200).json({indexUser});
     },
 
     async create(req, res) {
@@ -19,12 +19,12 @@ module.exports = {
             const hash = bcrypt.hashSync(senha, salt);
 
             if (senha !== confirma_senha || senha.length < 8) {
-                res.status(400).json({ error: "Verifique suas senhas" });
+               return res.send({ message: "Verifique suas senhas" });
             }
             else {
                 const user = await connection('users')
                     .select('id')
-                    .where('id', id)
+                    .where('email', email)
                     .first();
 
                 if (!user) {
@@ -36,15 +36,15 @@ module.exports = {
                         senha: hash
                     });
 
-                    return res.status(200).json({ message: 'Usuário cadastrado com sucesso!', id });
+                    return res.send({ message: 'Usuário cadastrado com sucesso!', id });
                 }
                 else {
-                    return res.status(400).json({ message: "Este usuário já está cadastrado, tente novamente!" });
+                    return res.send({ message: "Este usuário já está cadastrado, tente novamente!" });
                 }
             }
 
         } catch (error) {
-            return res.status(400).json({ message: "Ops! algo deu errado" });
+            return res.send({ message: "Ops! algo deu errado" });
         }
 
     },
